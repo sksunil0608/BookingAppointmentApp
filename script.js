@@ -1,5 +1,7 @@
 //Save This Form Data when user click on Submit.
 
+const { use } = require("express/lib/application");
+
 var form = document.querySelector('#form');
 
 form.addEventListener('submit',Onsubmit)
@@ -33,10 +35,20 @@ function Onsubmit(e){
             "date":date.value,
             "time":time.value
         };
-    
-        //Store in the Local Storage
-        itemsString = JSON.stringify(items)
-        localStorage.setItem(email.value,itemsString)
+        
+        // Check if the username is already there
+        userStatus = localStorage.getItem(email.value);
+        console.log(userStatus)
+        // If user is not present Store in the Local Storage
+        if(userStatus===''){ 
+        items_Serialized = JSON.stringify(items)
+        localStorage.setItem(email.value,items_Serialized)
+        }
+        
+
+        // Get back them in the accessible format
+        items_Deserialized = JSON.parse(localStorage.getItem(email.value))
+        console.log(items_Deserialized)
         
         // Show the Success Message
         let successMSG = document.createElement('p')
