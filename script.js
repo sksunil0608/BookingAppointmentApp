@@ -249,7 +249,10 @@ function viewAllRecord(e){
             //Edit Buteon
             editBtnRow = document.createElement('td');
             editBtn = document.createElement('button');
-            editBtn.id =uid
+            editBtn.value =uid
+            editBtn.onclick =function(){
+                editItem(this.value);
+            }
             editBtnRow.style.border = "1px solid black"
             editBtn.className = "table-button";
             editBtn.textContent="Edit";
@@ -298,6 +301,31 @@ function viewAllRecord(e){
         setTimeout(() => {
             showMSG.remove();
         }, 1000);
+    }
+
+
+    //Edit Function 
+    function editItem(id){
+        e.preventDefault();
+        element = JSON.parse(localStorage.getItem(id));
+        deleteItem(id)
+        var form_area = document.getElementById("form-area")
+        form_area.style.display = "inline";
+        
+        values = document.querySelectorAll('input');
+        values[0].value = element.name;
+        values[1].value = element.email;
+        values[2].value = element.phone;
+        values[3].value = element.date;
+        values[4].value = "UPDATE"
+
+        showItems.style.display ="none";
+        MSG.style.display ="none";
+        newReg.style.display ="none";
+        showMSG.style.display ="none";
+
+
+        
     }
 
 }
