@@ -3,7 +3,7 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
 }
-button{
+.button{
     float: right;
     border: 5px solid orange;
     padding: 2px;
@@ -51,11 +51,11 @@ input[type=date],select {
 }
 
 
-input[type=submit] {
+input[type=submit], .record-button {
     background-color: orange;
     border: 5px;
     border-radius: 10px;
-    width: 100%;
+    width: 48%;
     padding: 12px;
     color: white;
     font-size: 20px;
@@ -72,3 +72,7 @@ h1 {
     color:rgb(227, 154, 17) ;
 }
 
+.table-button{
+    display: flex;
+    margin: auto;
+}
