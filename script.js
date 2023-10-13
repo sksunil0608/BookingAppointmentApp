@@ -1,7 +1,5 @@
 //Save This Form Data when user click on Submit.
 
-const { use } = require("express/lib/application");
-
 var form = document.querySelector('#form');
 
 form.addEventListener('submit',Onsubmit)
@@ -22,7 +20,10 @@ function Onsubmit(e){
         
         showMSG.textContent = "Please insert Important Fields"
         showMSG.style.textAlign ="left";
-        form.insertBefore(showMSG,document.getElementById('fname-label'))
+
+        var form_area = document.getElementById('form-area');
+        form_area.insertBefore(showMSG,document.getElementById('fname-label'))
+
         setTimeout(() => {
             showMSG.remove();
         }, 5000);
@@ -35,20 +36,15 @@ function Onsubmit(e){
             "date":date.value,
             "time":time.value
         };
-        
-        // Check if the username is already there
-        userStatus = localStorage.getItem(email.value);
-        console.log(userStatus)
-        // If user is not present Store in the Local Storage
-        if(userStatus===''){ 
+
+
+        // If user is not present Store in the Local Storage 
         items_Serialized = JSON.stringify(items)
         localStorage.setItem(email.value,items_Serialized)
-        }
         
 
         // Get back them in the accessible format
         items_Deserialized = JSON.parse(localStorage.getItem(email.value))
-        console.log(items_Deserialized)
         
         // Show the Success Message
         let successMSG = document.createElement('p')
@@ -57,19 +53,54 @@ function Onsubmit(e){
         successMSG.style.color ="white";
         successMSG.style.padding ="10px";
         
-        successMSG.textContent = "Booking Done Successfully"
+        successMSG.textContent = "Congrats !Booking Done Successfully Here is your Details."
         successMSG.style.textAlign ="left";
         form.appendChild(successMSG)
+        // Show the Form Details in the Page itself.
+        let showItems = document.createElement('div');
+        showItems.style.border ="1px solid blue";
 
-        //Clear the log after submiting
+        //Add all the form detail in div
+        for (let key in items_Deserialized){
+            iList = document.createElement('h5');
+            iList.style.marginLeft ="5%";
+            let value = items_Deserialized[key];
+            iList.textContent = `${key.toUpperCase()} : ${value}`;
+            showItems.appendChild(iList);
+        }
+        //Add this div to form
+        form.appendChild(showItems);
+        
+        
+        // clear log button
+        let clrBtn = document.createElement('p');
+        clrBtn.style.border = "2px solid red";
+        clrBtn.style.backgroundColor = "yellow";
+        
+        // Clear the log after submitting
+        var anchorTag = document.createElement('a');
+        anchorTag.href = '#';
+        anchorTag.style.textDecoration = 'none';
+        anchorTag.textContent = 'Clear Log';
+
+        // Add a click event listener to the anchor tag
+        anchorTag.addEventListener('click', function () {
+            // Reload the page when the anchor tag is clicked
+            location.reload();
+        });
+
+        // Add anchor tag to clear button paragraph
+        clrBtn.appendChild(anchorTag);
+        //Add clear button to the show items div which we show the details
+        showItems.appendChild(clrBtn);
+
+
+        // Once Submitted clear the form
         setTimeout(()=>{
-            successMSG.remove();
-            fname.value='';
-            email.value='';
-            phone.value='';
-            date.value='';
-            time.value='';
-        },2000)
+            var form_area = document.getElementById("form-area")
+            form_area.style.display = "none";
+        },1)
+
     }
     
 }
