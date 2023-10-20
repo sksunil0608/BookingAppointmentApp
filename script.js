@@ -8,7 +8,10 @@
 var form = document.querySelector('#form');
 var record = document.getElementById('record-button');
 
-record.addEventListener("click",viewAllRecord)
+window.addEventListener('DOMContentLoaded',()=>{
+    record.addEventListener("click",viewAllRecord)
+})
+
 form.addEventListener('submit',createUser)
 
 
@@ -37,7 +40,7 @@ function emptyDataErrorMessage(){
 }
 
 function successMessageOnUserCreation(){
-    let successMSG = document.createElement('p')
+        let successMSG = document.createElement('p')
         successMSG.id = "successMSG"
         successMSG.style.border ="4px solid yellow";
         successMSG.style.backgroundColor ="green";
@@ -154,9 +157,10 @@ function createUser(event){
     
 }
 
-//View Record Function form localStoage
 
-function viewAllRecord(e){
+
+//View all the Record Function form Backend
+async function viewAllRecord(e){
     e.preventDefault();
 
     setTimeout(()=>{
@@ -164,8 +168,12 @@ function viewAllRecord(e){
         form_area.style.display = "none";
         var showItems = document.getElementById("show-items")
         if (showItems!=null){showItems.style.display ="none";}
-        
-        var successMSG = document.getElementById("successMSG");
+        let successMSG = document.createElement('p')
+        successMSG.id = "successMSG"
+        successMSG.style.border ="4px solid yellow";
+        successMSG.style.backgroundColor ="green";
+        successMSG.style.color ="white";
+        successMSG.style.padding ="10px";
         successMSG.style.display = "none";
     },1)
 
@@ -181,6 +189,7 @@ function viewAllRecord(e){
 
 
     // Show the Success Message
+
     let MSG = document.createElement('p')
     MSG.style.border ="4px solid yellow";
     MSG.style.backgroundColor ="green";
@@ -191,7 +200,7 @@ function viewAllRecord(e){
     MSG.style.textAlign ="left";
     form.appendChild(MSG)
 
-    
+
     itemHeadName = document.createElement('tr');
     itemHeadName.style.border ="1px solid black";
 
@@ -220,11 +229,13 @@ function viewAllRecord(e){
     userTime.style.border ="1px solid black";
     itemHeadName.appendChild(userTime)
 
+    //creating delete BUTTON
     userDelete = document.createElement('th');
     userDelete.textContent = "Delete";
     userDelete.style.border ="1px solid black";
     itemHeadName.appendChild(userDelete)
 
+    //CREATING UPDATE BUTTON
     userUpdate = document.createElement('th');
     userUpdate.textContent = "Update";
     userUpdate.style.border ="1px solid black";
@@ -233,19 +244,27 @@ function viewAllRecord(e){
     // Add heading to table
     showItems.appendChild(itemHeadName);
 
+    // Fetching all Record from Crud
+    let get_data = await axios.get('https://crudcrud.com/api/3aa48e6b4ed4459ba43d22debce37f62/booking-data')
+        .then((response)=>{
+            return response
+        }).catch((error)=>{
+            console.log(error);
+        })
 
-    if (localStorage.length!=0){
-        for (let i=0; i<localStorage.length;i++){
-            var uid =localStorage.key(i)    
-            // deserailize from json
-            records = JSON.parse(localStorage.getItem(uid))
+    if (get_data.data.length!=0){
+        for (let i=0; i<get_data.data.length;i++){
+            var uid =get_data.data[i]._id   
+            var records = get_data.data[i]
+            
 
             listItems = document.createElement('tr');
             listItems.style.border ="1px solid black";
             listItems.className = uid
-
-            for(let key in records){
-                value = records[key]
+            records_keys = Object.keys(records)
+            
+            for(let j = 1;j<records_keys.length;j++){
+                value = records[records_keys[j]]
                 item = document.createElement('td');
                 item.style.border ="1px solid black";
                 item.textContent = `${value}`
@@ -302,7 +321,7 @@ function viewAllRecord(e){
         location.reload();
 
     }
-
+    // Delete Item
     function deleteItem(id){
         e.preventDefault();
         localStorage.removeItem(id)
@@ -323,7 +342,7 @@ function viewAllRecord(e){
         setTimeout(() => {
             showMSG.remove();
         }, 1000);
-    }
+
 
 
     //Edit Function 
@@ -349,7 +368,5 @@ function viewAllRecord(e){
 
         
     }
-
 }
-
-
+}
