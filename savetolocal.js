@@ -2,14 +2,11 @@
 
 
 
-
-
-
 var form = document.querySelector('#form');
 var record = document.getElementById('record-button');
 
 record.addEventListener("click",viewAllRecord)
-form.addEventListener('submit',createUser)
+form.addEventListener('submit',Onsubmit)
 
 
 var fname = document.querySelector('#fname');
@@ -17,13 +14,11 @@ var email = document.querySelector('#email');
 var phone = document.querySelector('#phone');
 var date = document.querySelector('#date');
 var time = document.querySelector('#time');
+function Onsubmit(e){
+    e.preventDefault();
 
-
-
-
-
-function emptyDataErrorMessage(){
-    let showMSG = document.createElement('p')
+    if (fname.value ==='' || email.value ===''){
+        let showMSG = document.createElement('p')
         showMSG.style.border ="4px solid yellow";
         showMSG.style.backgroundColor ="red";
         showMSG.style.color ="white";
@@ -34,10 +29,31 @@ function emptyDataErrorMessage(){
 
         var form_area = document.getElementById('form-area');
         form_area.insertBefore(showMSG,document.getElementById('fname-label'))
-}
 
-function successMessageOnUserCreation(){
-    let successMSG = document.createElement('p')
+        setTimeout(() => {
+            showMSG.remove();
+        }, 2000);
+    }
+    else{
+        let items = {
+            "name":fname.value,
+            "email":email.value,
+            "phone":phone.value,
+            "date":date.value,
+            "time":time.value
+        };
+
+
+        // If user is not present Store in the Local Storage 
+        items_Serialized = JSON.stringify(items)
+        localStorage.setItem(email.value,items_Serialized)
+        
+
+        // Get back them in the accessible format
+        items_Deserialized = JSON.parse(localStorage.getItem(email.value))
+        
+        // Show the Success Message
+        let successMSG = document.createElement('p')
         successMSG.id = "successMSG"
         successMSG.style.border ="4px solid yellow";
         successMSG.style.backgroundColor ="green";
@@ -47,20 +63,16 @@ function successMessageOnUserCreation(){
         successMSG.textContent = "Congrats !Booking Done Successfully Here is your Details."
         successMSG.style.textAlign ="left";
         form.appendChild(successMSG)
-}
-
-function showDetailsOnPageAndclearLog(data){
-        console.log(data,"show detail")
+        // Show the Form Details in the Page itself.
         let showItems = document.createElement('div');
         showItems.style.border ="1px solid blue";
         showItems.id ="show-items";
 
-        
-
-        for (let key in data){
+        //Add all the form detail in div
+        for (let key in items_Deserialized){
             iList = document.createElement('h5');
             iList.style.marginLeft ="5%";
-            let value = data[key];
+            let value = items_Deserialized[key];
             iList.textContent = `${key.toUpperCase()} : ${value}`;
             showItems.appendChild(iList);
         }
@@ -108,42 +120,8 @@ function showDetailsOnPageAndclearLog(data){
         //Add clear button to the show items div which we show the details
         showItems.appendChild(viewBtn)
         showItems.appendChild(clrBtn);
-}
 
-function createUser(event){
-    event.preventDefault();
 
-    if (fname.value ==='' || email.value ===''){
-        emptyDataErrorMessage();
-        setTimeout(() => {
-            showMSG.remove();
-        }, 2000);
-    }
-    else{
-
-        const name = event.target.fname.value;
-        const email = event.target.email.value;
-        const phone = event.target.phone.value;
-        const date = event.target.date.value;
-        const time = event.target.time.value;
-
-        const obj = {
-            name,
-            email,
-            phone,
-            date,
-            time
-        }
-        axios.post('https://crudcrud.com/api/3aa48e6b4ed4459ba43d22debce37f62/booking-data',obj)
-        .then((response)=>{
-
-            // Show the Form Details in the Page itself.
-            showDetailsOnPageAndclearLog(response.data);
-        }).catch((err)=>{
-            console.log(err)
-        })
-        // Show the Success Message
-        successMessageOnUserCreation();
         // Once Submitted clear the form
         setTimeout(()=>{
             var form_area = document.getElementById("form-area")
@@ -352,4 +330,12 @@ function viewAllRecord(e){
 
 }
 
+
+//GET all form data and Add all the form detail in div
+        // axios.get('https://crudcrud.com/api/3aa48e6b4ed4459ba43d22debce37f62/booking-data')
+        // .then((response)=>{
+        //     console.log(response)
+        // }).catch((error)=>{
+        //     console.log(error);
+        // })
 
