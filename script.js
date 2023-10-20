@@ -37,6 +37,7 @@ function emptyDataErrorMessage(){
 
         var form_area = document.getElementById('form-area');
         form_area.insertBefore(showMSG,document.getElementById('fname-label'))
+        return showMSG;
 }
 
 function successMessageOnUserCreation(){
@@ -117,7 +118,7 @@ function createUser(event){
     event.preventDefault();
 
     if (fname.value ==='' || email.value ===''){
-        emptyDataErrorMessage();
+        let showMSG = emptyDataErrorMessage();
         setTimeout(() => {
             showMSG.remove();
         }, 2000);
@@ -262,7 +263,7 @@ async function viewAllRecord(e){
             listItems.style.border ="1px solid black";
             listItems.className = uid
             records_keys = Object.keys(records)
-            
+
             for(let j = 1;j<records_keys.length;j++){
                 value = records[records_keys[j]]
                 item = document.createElement('td');
@@ -322,9 +323,15 @@ async function viewAllRecord(e){
 
     }
     // Delete Item
-    function deleteItem(id){
+    async function deleteItem(id){
         e.preventDefault();
-        localStorage.removeItem(id)
+
+        let delete_user = await axios.delete(`https://crudcrud.com/api/3aa48e6b4ed4459ba43d22debce37f62/booking-data/${id}`)
+        .then((response)=>{
+           console.log(response)
+        }).catch((error)=>{
+            console.log("Something Went Wrong",error)
+        })
         var element = document.getElementsByClassName(id)
         element[0].remove();
 
@@ -342,6 +349,7 @@ async function viewAllRecord(e){
         setTimeout(() => {
             showMSG.remove();
         }, 1000);
+        
 
 
 
