@@ -25,29 +25,30 @@
                 <p>Book a call slot and our reperesentative will call you within 1hr of selected time</p>
                 <hr>
                 
-                <label for="name" id = "fname-label">Name</label><br>
-                <input class="input" type="text" name="name" id="fname"><br>
+                <label for="fname" id = "fname-label">Name</label><br>
+                <input class="input" type="text" name="fname" id="fname" autocomplete="name" ><br>
 
                 <label for="email">Email</label><br>
-                <input class="input" type ="text" name="email" id="email"><br>
+                <input class="input" type ="text" name="email" id="email" autocomplete="email"><br>
 
                 <label for="phone">Phone</label><br>
-                <input type="phone" name="phone" id="phone"><br>
+                <input type="phone" name="phone" id="phone" autocomplete="phone"><br>
 
-                <label for="date-time">Time For Call</label><br>
+                <label for="date">Time For Call</label><br>
                 <input class="input" type="date" name="date-time" id="date" value="2023-10-07">
 
-                <select name="date-time" id="time">
+                <select name="time" id="time">
                     <option value="11:00">11:00</option>
                     <option value="12:00">12:00</option>
                     <option value="01:00">01:00</option>
                 </select> <br>   
 
-                <input type="submit" value="Get a Call">
+                <button class= "submit-button" id="submit-button">Get A Call</button>
                 <button class ="record-button" id = "record-button">View Records</button>
             </div>
         </form>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

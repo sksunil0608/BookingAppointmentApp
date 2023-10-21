@@ -1,27 +1,21 @@
 //Save This Form Data when user click on Submit.
 
-
-
-
-
-
 var form = document.querySelector('#form');
 var record = document.getElementById('record-button');
 
 window.addEventListener('DOMContentLoaded',()=>{
     record.addEventListener("click",viewAllRecord)
+    form.addEventListener('submit',createUser)
 })
 
-form.addEventListener('submit',createUser)
 
 
-var fname = document.querySelector('#fname');
-var email = document.querySelector('#email');
-var phone = document.querySelector('#phone');
-var date = document.querySelector('#date');
-var time = document.querySelector('#time');
 
-
+var inp_fname = document.querySelector('#fname');
+var inp_email = document.querySelector('#email');
+var inp_phone = document.querySelector('#phone');
+var inp_date = document.querySelector('#date');
+var inp_time = document.querySelector('#time')
 
 
 
@@ -54,7 +48,6 @@ function successMessageOnUserCreation(){
 }
 
 function showDetailsOnPageAndclearLog(data){
-        console.log(data,"show detail")
         let showItems = document.createElement('div');
         showItems.style.border ="1px solid blue";
         showItems.id ="show-items";
@@ -118,18 +111,15 @@ function createUser(event){
     event.preventDefault();
 
     if (fname.value ==='' || email.value ===''){
-        let showMSG = emptyDataErrorMessage();
-        setTimeout(() => {
-            showMSG.remove();
-        }, 2000);
+        console.log('')
     }
     else{
 
-        const name = event.target.fname.value;
-        const email = event.target.email.value;
-        const phone = event.target.phone.value;
-        const date = event.target.date.value;
-        const time = event.target.time.value;
+        const name = inp_fname.value;
+        const email = inp_email.value;
+        const phone = inp_phone.value;
+        const date = inp_date.value;
+        const time = inp_time.value;
 
         const obj = {
             name,
@@ -138,7 +128,7 @@ function createUser(event){
             date,
             time
         }
-        axios.post('https://crudcrud.com/api/3aa48e6b4ed4459ba43d22debce37f62/booking-data',obj)
+        axios.post('https://crudcrud.com/api/ca600657d29e45249a3bbd7218985a9d/booking-data',obj)
         .then((response)=>{
 
             // Show the Form Details in the Page itself.
@@ -246,7 +236,7 @@ async function viewAllRecord(e){
     showItems.appendChild(itemHeadName);
 
     // Fetching all Record from Crud
-    let get_data = await axios.get('https://crudcrud.com/api/3aa48e6b4ed4459ba43d22debce37f62/booking-data')
+    let get_data = await axios.get('https://crudcrud.com/api/ca600657d29e45249a3bbd7218985a9d/booking-data')
         .then((response)=>{
             return response
         }).catch((error)=>{
@@ -278,9 +268,9 @@ async function viewAllRecord(e){
             deleteBtnRow = document.createElement('td');
             deleteBtnRow.style.border ="1px solid black"
             deleteBtn = document.createElement('button');
-            deleteBtn.id =uid
+            deleteBtn.value =uid
             deleteBtn.onclick = function(){
-                deleteItem(this.id)
+                deleteItem(this.value)
             }
             deleteBtn.className = "table-button";
             deleteBtn.textContent="X";
@@ -326,7 +316,7 @@ async function viewAllRecord(e){
     async function deleteItem(id){
         e.preventDefault();
 
-        let delete_user = await axios.delete(`https://crudcrud.com/api/3aa48e6b4ed4459ba43d22debce37f62/booking-data/${id}`)
+        let delete_user = await axios.delete(`https://crudcrud.com/api/ca600657d29e45249a3bbd7218985a9d/booking-data/${id}`)
         .then((response)=>{
            console.log(response)
         }).catch((error)=>{
@@ -349,32 +339,70 @@ async function viewAllRecord(e){
         setTimeout(() => {
             showMSG.remove();
         }, 1000);
-        
-
-
+    }
 
     //Edit Function 
-    function editItem(id){
+    async function editItem(id){
         e.preventDefault();
-        element = JSON.parse(localStorage.getItem(id));
-        deleteItem(id)
-        var form_area = document.getElementById("form-area")
-        form_area.style.display = "inline";
-        
+        let get_data = await axios.get(`https://crudcrud.com/api/ca600657d29e45249a3bbd7218985a9d/booking-data/${id}`)
+        .then((response)=>{
+            return response
+        }).catch((error)=>{
+            console.log(error);
+        })
+        element = get_data.data;
+
         values = document.querySelectorAll('input');
         values[0].value = element.name;
         values[1].value = element.email;
         values[2].value = element.phone;
         values[3].value = element.date;
-        values[4].value = "UPDATE"
+
+        form_area = document.getElementById("form-area");
+        form_area.style.display ="inline";
+        submit_button = document.getElementById("submit-button");
+        submit_button.style.display ="none"
+
+        update_button = document.createElement('button');
+        update_button.textContent = "update"
+        update_button.className = "submit-button"
+        form.appendChild(update_button)
+        update_button.onclick =function(e){
+            e.preventDefault();
+            updateDetails();
+        }
+        async function updateDetails(e){
+            const name = inp_fname.value;
+            const email = inp_email.value;
+            const phone = inp_phone.value;
+            const date = inp_date.value;
+            const time = inp_time.value;
+
+            const obj = {
+                name,
+                email,
+                phone,
+                date,
+                time
+        }
+            await axios.put(`https://crudcrud.com/api/ca600657d29e45249a3bbd7218985a9d/booking-data/${id}`,obj)
+            .then((response)=>{
+                // Show the Form Details in the Page itself.
+                let p = document.createElement("p");
+                p.textContent = " Details Updated"
+                form.appendChild(p)
+                showDetailsOnPageAndclearLog(response.data)
+                
+            }).catch((error)=>{
+                console.log(error);
+            })
+        }
 
         showItems.style.display ="none";
         MSG.style.display ="none";
         newReg.style.display ="none";
-        showMSG.style.display ="none";
 
 
         
     }
-}
 }

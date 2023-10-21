@@ -51,7 +51,7 @@ input[type=date],select {
 }
 
 
-input[type=submit], .record-button {
+.submit-button, .record-button {
     background-color: orange;
     border: 5px;
     border-radius: 10px;
