@@ -15,7 +15,7 @@ function showAllUsers(response) {
                         <th class="border-1 text-primary">UPDATE</th>
                       </tr>
                    </table>`;
-form_border.appendChild(user_data);
+  form_border.appendChild(user_data);
   response.data.forEach((i) => {
     const table = document.getElementById("table");
     // Create a new row
@@ -39,30 +39,29 @@ form_border.appendChild(user_data);
                                 Edit
                             </button>`;
   });
-  
 }
 // Show the Added User Data on the Page
 function showAddedUser(response) {
-    const data = response.data.newUserDetails;
+  const data = response.data.newUserDetails;
 
-    const table = document.getElementById("table");
-    // Create a new row
-    var newRow = table.insertRow(table.rows.length);
-    newRow.id = data.id;
-    // Insert cells into the row
-    var cell1 = newRow.insertCell(0);
-    var cell2 = newRow.insertCell(1);
-    var cell3 = newRow.insertCell(2);
-    var cell4 = newRow.insertCell(3);
-    var cell5 = newRow.insertCell(4);
+  const table = document.getElementById("table");
+  // Create a new row
+  var newRow = table.insertRow(table.rows.length);
+  newRow.id = data.id;
+  // Insert cells into the row
+  var cell1 = newRow.insertCell(0);
+  var cell2 = newRow.insertCell(1);
+  var cell3 = newRow.insertCell(2);
+  var cell4 = newRow.insertCell(3);
+  var cell5 = newRow.insertCell(4);
 
-    cell1.innerHTML = data.name;
-    cell2.innerHTML = data.email;
-    cell3.innerHTML = data.phone;
-    cell4.innerHTML = ` <button class="btn btn-danger btn-sm input-group-text m-1" onclick="deleteUser('${data.id}')">
+  cell1.innerHTML = data.name;
+  cell2.innerHTML = data.email;
+  cell3.innerHTML = data.phone;
+  cell4.innerHTML = ` <button class="btn btn-danger btn-sm input-group-text m-1" onclick="deleteUser('${data.id}')">
                                 Delete
                             </button>`;
-    cell5.innerHTML = `<button class="btn btn-warning btn-sm input-group-text m-1" onclick="updateUser('${data.id}')">
+  cell5.innerHTML = `<button class="btn btn-warning btn-sm input-group-text m-1" onclick="updateUser('${data.id}')">
                                 Edit
                            </button>`;
 }
@@ -73,20 +72,19 @@ function showEditedUser(response) {
 }
 //Clear the Input Box
 function clearInputBox() {
+  document.querySelector("#name").value = "";
+  document.querySelector("#email").value = "";
+  document.querySelector("#phone").value = "";
+  document.querySelector("#time").value = "";
+  document.querySelector("#date").value = "";
 
-    document.querySelector("#name").value = "";
-    document.querySelector("#email").value = "";
-    document.querySelector("#phone").value = "";
-    document.querySelector("#time").value = "";
-    document.querySelector("#date").value = "";
-
-    if (document.querySelector("#update-button")) {
-      document.querySelector("#update-button").remove();
-    }
+  if (document.querySelector("#update-button")) {
+    document.querySelector("#update-button").remove();
+  }
 }
 
 // Function to add user to the Database
-async function createUser(event,) {
+async function createUser(event) {
   event.preventDefault();
 
   if (name.value === "" || email.value === "") {
@@ -105,7 +103,7 @@ async function createUser(event,) {
       phone,
       date,
       time,
-      editMode
+      editMode,
     };
     try {
       const response = await axios.post(
@@ -128,29 +126,46 @@ async function getAllUsers() {
     console.log(err);
   }
 }
-function removeDeletedUserUI(id){
-    document.getElementById(id).remove()
+function removeDeletedUserUI(id) {
+  document.getElementById(id).remove();
 }
-async function deleteUser(id){
-    try{
-        await axios.delete(`http://localhost:3000/user/delete-user/${id}`);
-        removeDeletedUserUI(id);
-
-    }catch(err){
-        console.log(err)
-    }
+async function deleteUser(id) {
+  try {
+    await axios.delete(`http://localhost:3000/user/delete-user/${id}`);
+    removeDeletedUserUI(id);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-// I will handle edit functionality later it is not completed as it was not said in task.
-async function updateUser(id){
+function showInputDataOnEditpage(data) {
+  document.querySelector("#name").value = data.data.name;
+  document.querySelector("#email").value = data.data.email;
+  document.querySelector("#phone").value = data.data.phone;
+  document.querySelector("#date").value = data.data.date;
+  document.querySelector("#time").value = data.data.time;
+}
 
-    const name =document.querySelector("#name").value;
+async function updateUser(id) {
+  const response = await axios.get(`http://localhost:3000/user/${id}`);
+  showInputDataOnEditpage(response);
+
+  const update_btn = document.createElement("div");
+  update_btn.style = "display:flex;justify-content:center;"
+  update_btn.innerHTML = `<button class="btn btn-warning submit-button input-group-text m-1" style="padding:15px">
+                                UPDATE
+                           </button>`;
+  document.getElementById("form-border").appendChild(update_btn);
+  update_btn.addEventListener("click", postEditData);
+
+  async function postEditData(event) {
+    event.preventDefault();
+    const name = document.querySelector("#name").value;
     const email = document.querySelector("#email").value;
     const phone = document.querySelector("#phone").value;
-    const date =document.querySelector("#date").value;
-    const time =document.querySelector("#time").value;
-    const editMode= true;
-
+    const date = document.querySelector("#date").value;
+    const time = document.querySelector("#time").value;
+    const editMode = true;
     const obj = {
       name,
       email,
@@ -160,12 +175,15 @@ async function updateUser(id){
       editMode,
     };
 
-    try{
-        // const response = await axios.post(`http://localhost:3000/user/edit-user/${id}`,obj);
-        // showEditedUser(response)
-        console.log("INput Called")
-        clearInputBox()
-    }catch(err){
-        console.log(err)
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/user/edit-user/${id}`,
+        obj
+      );
+      showEditedUser(response);
+      clearInputBox();
+    } catch (err) {
+      console.log(err);
     }
+  }
 }
